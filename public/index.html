@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Blog CRUD App</title>
+
+<style>
+
+body{
+
+font-family:Arial;
+
+background:#f5f5f5;
+
+padding:30px;
+
+max-width:900px;
+
+margin:auto;
+
+}
+
+h1{
+
+text-align:center;
+
+margin-bottom:30px;
+
+}
+
+input,textarea{
+
+width:100%;
+
+padding:14px;
+
+margin:10px 0;
+
+border-radius:8px;
+
+border:1px solid #ccc;
+
+box-sizing:border-box;
+
+}
+
+button{
+
+padding:12px 18px;
+
+border:none;
+
+border-radius:8px;
+
+cursor:pointer;
+
+margin-right:8px;
+
+}
+
+button:hover{
+
+opacity:.9;
+
+}
+
+.blog{
+
+background:white;
+
+padding:20px;
+
+margin-top:20px;
+
+border-radius:12px;
+
+box-shadow:
+
+0 2px 8px rgba(0,0,0,.1);
+
+}
+
+.blog h3{
+
+margin-top:0;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Blog CRUD App</h1>
+
+<input
+id="title"
+placeholder="Enter Blog Title"
+/>
+
+<textarea
+id="content"
+placeholder="Write content"
+></textarea>
+
+<button
+style="
+background:#007bff;
+color:white;
+width:100%;
+"
+onclick="addBlog()"
+>
+
+Add Blog
+
+</button>
+
+<input
+
+id="search"
+
+placeholder="Search Blogs..."
+
+onkeyup="loadBlogs()"
+
+/>
+
+<div id="blogs"></div>
+
+<script>
+
+async function loadBlogs(){
+
+const response = await fetch("/blogs");
+const blogs = await response.json();
+
+const search = document.getElementById("search").value.toLowerCase();
+const container = document.getElementById("blogs");
+
+container.innerHTML = "";
+
+blogs
+  .filter(blog =>
+    blog.title.toLowerCase().includes(search) ||
+    blog.content.toLowerCase().includes(search)
+  )
+  .forEach((blog,index)=>{
+
+container.innerHTML+=`
+
+<div class="blog">
+
+<h3>${blog.title}</h3>
+
+<p>${blog.content}</p>
+
+<small>
+
+Posted:
+
+${blog.date || "No date"}
+
+</small>
+
+<button
+style="background:#4CAF50;color:white;"
+onclick="editBlog(${index})">
+
+Edit
+
+</button>
+
+<button
+style="background:#ff4d4d;color:white;"
+onclick="deleteBlog(${index})">
+
+Delete
+
+</button>
+</div>
+
+`;
+
+});
+
+}
+
+async function addBlog(){
+
+const title=
+document.getElementById(
+"title"
+).value;
+
+const content=
+document.getElementById(
+"content"
+).value;
+
+await fetch(
+
+"/blogs",
+
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:JSON.stringify({
+
+title,
+content,
+
+date:
+
+new Date()
+
+.toLocaleString()
+
+})
+
+}
+
+);
+
+loadBlogs();
+
+document.getElementById("title").value="";
+
+document.getElementById("content").value="";
+
+}
+
+async function deleteBlog(id){
+
+await fetch(
+
+"/blogs/"+id,
+
+{
+
+method:"DELETE"
+
+}
+
+
+);
+
+loadBlogs();
+
+}
+
+async function editBlog(id){
+
+const title =
+prompt("New Title");
+
+const content =
+prompt("New Content");
+
+await fetch(
+
+"/blogs/"+id,
+
+{
+
+method:"PUT",
+
+headers:{
+
+"Content-Type":
+"application/json"
+
+},
+
+body:JSON.stringify({
+
+title,
+content
+
+})
+
+}
+
+);
+
+loadBlogs();
+
+}
+
+</script>
+
+</body>
+
+</html>

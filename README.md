@@ -9,8 +9,6 @@ A Full Stack Blog Management Platform Built While Learning Backend, APIs, and Da
 </p>
 
 
-# 📝 Blog CRUD Application
-
 ## 🚀 About This Project
 
 Hey! This is my Blog CRUD Application project that I built to strengthen my understanding of full-stack web development and database operations.
